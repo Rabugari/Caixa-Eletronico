@@ -22,7 +22,7 @@ import br.com.caixa.exceptions.CaixaSemNotasException;
 @RunWith(JUnit4.class)
 public class CaixaEletronicoTest {
 
-	private CaixaEletronico caixa;
+	private CaixaEletronico caixaEletronico;
 	
 	@Before
 	public void setup(){
@@ -32,35 +32,46 @@ public class CaixaEletronicoTest {
 		notas.put(CINQUENTA, 1L);
 		notas.put(CEM, 3L);
 		
-		this.caixa = new CaixaEletronico(notas);
+		this.caixaEletronico = new CaixaEletronico(notas);
 	}
 	
 	@Test
 	public void verificaQuantidadeAposAdicionarNotaDe10() throws CaixaSemNotasException{
-		caixa.deposita(DEZ);
-		assertEquals(caixa.getQuantidadeDeNotas(DEZ), 6, 6);
+		caixaEletronico.deposita(DEZ);
+		assertEquals(caixaEletronico.getQuantidadeDeNotas(DEZ), 6, 6);
 	}
 	
 	@Test
-	public void saqueDe40() throws IllegalArgumentException, CaixaSemNotasException{
-		List<Nota> notasRetornadas = caixa.saca(40);
+	public void saqueDe60() throws IllegalArgumentException, CaixaSemNotasException{
+		List<Nota> notasRetornadas = caixaEletronico.saca(40);
 		assertEquals(Arrays.asList(VINTE, VINTE), notasRetornadas);
 	}
 	
 	@Test
-	public void saqueDe140() throws IllegalArgumentException, CaixaSemNotasException{
-		List<Nota> notasRetornadas = caixa.saca(140);
-		assertEquals(Arrays.asList(CEM, VINTE, VINTE), notasRetornadas);
+	public void saqueDe170() throws IllegalArgumentException, CaixaSemNotasException{
+		List<Nota> notasRetornadas = caixaEletronico.saca(170);
+		assertEquals(Arrays.asList(CEM, CINQUENTA, VINTE), notasRetornadas);
 	}
 	
 	@Test
-	public void saqueDe350() throws IllegalArgumentException, CaixaSemNotasException{
-		List<Nota> notasRetornadas = caixa.saca(350);
-		assertEquals(Arrays.asList(CEM, CEM, CEM, CINQUENTA), notasRetornadas);
+	public void saqueDe380() throws IllegalArgumentException, CaixaSemNotasException{
+		List<Nota> notasRetornadas = caixaEletronico.saca(380);
+		assertEquals(Arrays.asList(CEM, CEM, CEM, CINQUENTA, VINTE, DEZ), notasRetornadas);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void tentaSacarValorInvalido() throws IllegalArgumentException, CaixaSemNotasException{
-		caixa.saca(-50);
+		caixaEletronico.saca(-50);
+	}
+	
+	@Test
+	public void verificaQuantidadeDeNotasAposOSaque() throws CaixaSemNotasException {
+		caixaEletronico.saca(100);
+		assertEquals(caixaEletronico.getQuantidadeDeNotas(CEM), 2L);
+	}
+	
+	@Test(expected = CaixaSemNotasException.class)
+	public void sacouMaisQueLimite() throws CaixaSemNotasException{
+		caixaEletronico.saca(450);
 	}
 }
