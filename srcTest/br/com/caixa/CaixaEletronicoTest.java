@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import br.com.caixa.enums.Nota;
-import br.com.caixa.exceptions.CaixaSemNotas;
+import br.com.caixa.exceptions.CaixaSemNotasException;
 
 @RunWith(JUnit4.class)
 public class CaixaEletronicoTest {
@@ -36,31 +36,31 @@ public class CaixaEletronicoTest {
 	}
 	
 	@Test
-	public void verificaQuantidadeAposAdicionarNotaDe10() throws CaixaSemNotas{
-		caixa.adicionaNota(DEZ);
+	public void verificaQuantidadeAposAdicionarNotaDe10() throws CaixaSemNotasException{
+		caixa.deposita(DEZ);
 		assertEquals(caixa.getQuantidadeDeNotas(DEZ), 6, 6);
 	}
 	
 	@Test
-	public void saqueDe40(){
-		List<Nota> notasRetornadas = caixa.saque(40);
+	public void saqueDe40() throws IllegalArgumentException, CaixaSemNotasException{
+		List<Nota> notasRetornadas = caixa.saca(40);
 		assertEquals(Arrays.asList(VINTE, VINTE), notasRetornadas);
 	}
 	
 	@Test
-	public void saqueDe140(){
-		List<Nota> notasRetornadas = caixa.saque(140);
+	public void saqueDe140() throws IllegalArgumentException, CaixaSemNotasException{
+		List<Nota> notasRetornadas = caixa.saca(140);
 		assertEquals(Arrays.asList(CEM, VINTE, VINTE), notasRetornadas);
 	}
 	
 	@Test
-	public void saqueDe350(){
-		List<Nota> notasRetornadas = caixa.saque(350);
+	public void saqueDe350() throws IllegalArgumentException, CaixaSemNotasException{
+		List<Nota> notasRetornadas = caixa.saca(350);
 		assertEquals(Arrays.asList(CEM, CEM, CEM, CINQUENTA), notasRetornadas);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
-	public void tentaSacarValorInvalido(){
-		caixa.saque(-50);
+	public void tentaSacarValorInvalido() throws IllegalArgumentException, CaixaSemNotasException{
+		caixa.saca(-50);
 	}
 }
