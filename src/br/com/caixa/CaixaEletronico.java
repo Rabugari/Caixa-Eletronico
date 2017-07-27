@@ -7,7 +7,7 @@ import java.util.Map;
 import static br.com.caixa.enums.Nota.*;
 
 import br.com.caixa.enums.Nota;
-import br.com.caixa.exceptions.CaixaSemNotas;
+import br.com.caixa.exceptions.CaixaSemNotasException;
 
 /**
  * @author Massao
@@ -23,11 +23,11 @@ public class CaixaEletronico {
 		this.notas = notas;
 	}
 
-	public List<Nota> saque(long quantidadeDoSaque) throws IllegalArgumentException {
+	public List<Nota> saca(long quantidadeDoSaque) throws IllegalArgumentException, CaixaSemNotasException {
 		List<Nota> notasDoSaque = new ArrayList<>();
 
 		if(quantidadeDoSaque < 0)
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Não se pode sacar um valor negativo");
 		
 		while(quantidadeDoSaque>0){
 			if(notaEhValida(quantidadeDoSaque,DEZ, VINTE))
@@ -39,14 +39,14 @@ public class CaixaEletronico {
 			if(notaEhValida(quantidadeDoSaque, CINQUENTA, CEM))
 				quantidadeDoSaque = alteraSaldo(quantidadeDoSaque, CINQUENTA, notasDoSaque);
 
-			if((quantidadeDoSaque >= CEM.getValor()) && notas.get(CEM) != null)
+			if((quantidadeDoSaque >= CEM.getValor()) && getQuantidadeDeNotas(CEM) > 0)
 				quantidadeDoSaque = alteraSaldo(quantidadeDoSaque, CEM, notasDoSaque);
 		}
 		return notasDoSaque;
 	}
 
-	private boolean notaEhValida(long quantidadeDoSaque, Nota notaMenor, Nota notaMaior){
-		return ((quantidadeDoSaque >= notaMenor.getValor() && quantidadeDoSaque < notaMaior.getValor()) && notas.get(notaMenor) != null);
+	private boolean notaEhValida(long quantidadeDoSaque, Nota notaMenor, Nota notaMaior) throws CaixaSemNotasException{
+		return ((quantidadeDoSaque >= notaMenor.getValor() && quantidadeDoSaque < notaMaior.getValor()) && getQuantidadeDeNotas(notaMenor) > 0);
 	}
 	
 	private long alteraSaldo(long quantidadeDoSaque, Nota notaASerSacada, List<Nota> notasDoSaque){
@@ -59,8 +59,7 @@ public class CaixaEletronico {
 		return quantidadeDoSaque;
 	}
 
-
-	public void adicionaNota(final Nota nota){
+	public void deposita(final Nota nota){
 		Long quantidade = notas.get(nota);
 
 		if(quantidade!=null)
@@ -69,11 +68,12 @@ public class CaixaEletronico {
 			notas.put(nota, 1L);
 	}
 
-	public long getQuantidadeDeNotas(final Nota nota) throws CaixaSemNotas {
+	public long getQuantidadeDeNotas(final Nota nota) throws CaixaSemNotasException {
 		if(notas!=null){
-			return notas.get(nota).longValue();
+			Long quantidade = notas.get(nota);
+			return quantidade!= null ? quantidade.longValue() : 0;
 		}
-		throw new CaixaSemNotas();
+		throw new CaixaSemNotasException("O Caixa está vazio.");
 	}
 
 	public final Map<Nota, Long> getNotas() {
