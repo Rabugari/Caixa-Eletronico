@@ -45,11 +45,11 @@ public class CaixaEletronico {
 		return notasDoSaque;
 	}
 
-	public boolean notaEhValida(long quantidadeDoSaque, Nota notaMenor, Nota notaMaior){
+	private boolean notaEhValida(long quantidadeDoSaque, Nota notaMenor, Nota notaMaior){
 		return ((quantidadeDoSaque >= notaMenor.getValor() && quantidadeDoSaque < notaMaior.getValor()) && notas.get(notaMenor) != null);
 	}
 	
-	public long alteraSaldo(long quantidadeDoSaque, Nota notaASerSacada, List<Nota> notasDoSaque){
+	private long alteraSaldo(long quantidadeDoSaque, Nota notaASerSacada, List<Nota> notasDoSaque){
 		notasDoSaque.add(notaASerSacada);
 		long quantidade = notas.get(notaASerSacada);
 		notas.put(notaASerSacada, new Long(--quantidade));
